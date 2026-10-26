@@ -1,0 +1,16 @@
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*~
+
+# 依赖（本项目无构建依赖，仅为防御性配置）
+node_modules/
+dist/
+build/

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Σχεδιασμένο από την παπάγια, τον τυραννόσαυρο και τη σωρειτομελανία.仅供教学使用，版权所有私自篡改或传播必究</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀</text></svg>">
+</head>
+<body class="bg-[#050510] text-white flex flex-col items-center justify-center min-h-screen overflow-hidden select-none">
+
+    <!-- Starry Background -->
+    <canvas class="stars" id="bgCanvas"></canvas>
+
+    <div class="game-container" id="container">
+        <!-- Physics and Game Rendering Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- UI Overlay -->
+        <div class="ui-layer">
+            <div class="flex justify-between items-start relative">
+                <div class="score-board">
+                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">当前分数 (Score)</div>
+                    <div class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-500" id="scoreDisplay">0</div>
+                </div>
+
+                <div class="score-board flex flex-col items-center">
+                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider" id="nextTitle">下一个 (Next)</div>
+                    <canvas id="nextPlanetCanvas" width="50" height="50" class="mt-1"></canvas>
+                    <div id="nextPlanetName" class="planet-name-badge">未知</div>
+                </div>
+            </div>
+
+            <!-- 战功图鉴按钮 -->
+            <div class="flex justify-end mt-0 relative" style="pointer-events: none; margin-top: -8px;">
+                <button id="meritGalleryBtn" style="pointer-events: auto;">🏛️</button>
+            </div>
+
+            <!-- ================= 战功硬币 UI ================= -->
+            <div id="meritCoinWrapper" class="absolute hidden">
+                <button class="coin-close-btn" id="closeMeritBtn">✕</button>
+                <div class="coin-inner" id="meritCoinInner">
+                    <div class="coin-face coin-front" id="meritFront">
+                        <div class="absolute top-[12%] left-0 w-full text-center z-10 pointer-events-none">
+                            <span class="bg-black/60 text-amber-300 text-[10px] px-2 py-1 rounded-full border border-amber-500/50 shadow-lg backdrop-blur-sm tracking-widest">🥇战功硬币🥇</span>
+                        </div>
+                        <div class="coin-front-overlay">
+                            <div id="meritFrontText" class="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wide">铭文占位符</div>
+                            <div class="text-[9px] text-amber-200/60 mt-1 uppercase tracking-widest">点击翻面</div>
+                        </div>
+                    </div>
+                    <div class="coin-face coin-back relative">
+                        <div class="absolute inset-2 border border-dashed border-amber-700/50 rounded-full pointer-events-none"></div>
+                        <div class="coin-back-content">
+                            <div id="meritBackTitle" class="text-amber-400 font-black text-base sm:text-lg mb-2 text-center border-b border-amber-700/50 pb-1 w-full flex-shrink-0">战功标题</div>
+                            <div id="meritBackText" class="text-[0.65rem] sm:text-[0.75rem] text-amber-100/90 text-justify leading-relaxed overflow-y-auto no-scrollbar flex-1 w-full">这里是神话故事详细文本。</div>
+                            <div class="text-[9px] text-amber-600/60 mt-2 text-center flex-shrink-0 tracking-widest uppercase">点击翻回正面</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 知识成就奖励卡片 ===== -->
+            <div id="knowledgeCard" class="absolute left-1/2 top-1/2 w-80 max-w-[92%] h-[520px] border-2 border-amber-400/60 rounded-2xl shadow-[0_0_35px_rgba(251,191,36,0.4)] z-50 hidden">
+                <div class="card-inner">
+                    <div class="card-face card-front" id="cardFront">
+                        <div class="card-overlay"></div>
+                        <div class="flex items-center justify-between w-full flex-shrink-0">
+                            <span class="text-amber-300 text-[12px] sm:text-[13px] font-black tracking-widest uppercase flex items-center gap-1 drop-shadow-md">✨ 发现新天体成就 ✨</span>
+                            <button class="card-close-btn" id="closeKcBtnFront">✕</button>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-end pb-4 w-full">
+                            <div id="kcDesc" class="text-xs sm:text-sm text-purple-100/90 text-left leading-relaxed bg-black/60 p-3 rounded-xl border border-purple-500/30 w-full max-h-[160px] overflow-y-auto backdrop-blur-sm min-h-0"></div>
+                        </div>
+                        <div class="text-[10px] text-amber-400/60 text-center mt-1 flex-shrink-0 tracking-wider">👆 点击卡片翻面查看神话故事</div>
+                    </div>
+                    <div class="card-face card-back" id="cardBack">
+                        <div class="card-overlay"></div>
+                        <div class="flex items-center justify-between w-full flex-shrink-0">
+                            <span class="text-indigo-300 text-[12px] sm:text-[13px] font-black tracking-widest uppercase flex items-center gap-1 drop-shadow-md">🏛️ 解锁神祇闪卡 🏛️</span>
+                            <button class="card-close-btn" id="closeKcBtnBack">✕</button>
+                        </div>
+                        <div id="kcGodName" class="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-purple-300 to-pink-400 text-center drop-shadow-lg mt-0.5 flex-shrink-0"></div>
+                        <div class="w-full flex justify-center flex-shrink-0 my-0.5">
+                            <img id="kcGodImage" class="god-portrait" src="" alt="神祇立绘" />
+                        </div>
+                        <div id="kcGodDesc" class="text-xs sm:text-sm text-purple-100/90 text-left leading-relaxed bg-black/60 p-3 rounded-xl border border-indigo-500/30 w-full backdrop-blur-sm flex-1 min-h-0 overflow-y-visible"></div>
+                        <div class="text-[10px] text-indigo-400/60 text-center mt-1 flex-shrink-0 tracking-wider">👆 点击卡片翻回科普知识</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 太空垃圾威胁警告卡片 ===== -->
+            <div id="threatCard" class="absolute left-1/2 top-1/2 w-80 max-w-[92%] h-[520px] border-2 border-red-500/60 rounded-2xl shadow-[0_0_35px_rgba(239,68,68,0.5)] z-50 hidden">
+                <div class="card-inner">
+                    <div class="card-face card-front" id="threatFront" style="background-image:url('assets/cards/debris.png');background-size:cover;background-position:center;background-repeat:no-repeat;">
+                        <div class="card-overlay"></div>
+                        <div class="flex items-center justify-between w-full flex-shrink-0">
+                            <span class="text-red-400 text-[12px] sm:text-[13px] font-black tracking-widest uppercase flex items-center gap-1 drop-shadow-md">⚠️ 太阳系威胁警告 ⚠️</span>
+                            <button class="card-close-btn" id="closeThreatBtnFront">✕</button>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-end pb-4 w-full">
+                            <div id="threatDesc" class="text-xs sm:text-sm text-red-100/90 text-left leading-relaxed bg-black/70 p-3 rounded-xl border border-red-500/40 w-full max-h-[160px] overflow-y-auto backdrop-blur-sm min-h-0">太空垃圾是指在太空中废弃的人造物体，包括废弃卫星、火箭残骸、碎片等。它们在地球轨道上以极高速度飞行，对正常运行的航天器构成严重威胁，是当前人类航天活动面临的主要隐患之一。</div>
+                        </div>
+                        <div class="text-[10px] text-red-400/60 text-center mt-1 flex-shrink-0 tracking-wider">👆 点击卡片翻面查看详情</div>
+                    </div>
+                    <div class="card-face card-back" id="threatBack" style="background-image:url('assets/planets/debris.png');background-size:cover;background-position:center;background-repeat:no-repeat;">
+                        <div class="card-overlay"></div>
+                        <div class="flex items-center justify-between w-full flex-shrink-0">
+                            <span class="text-orange-300 text-[12px] sm:text-[13px] font-black tracking-widest uppercase flex items-center gap-1 drop-shadow-md">🛰️ 太空垃圾危机 🛰️</span>
+                            <button class="card-close-btn" id="closeThreatBtnBack">✕</button>
+                        </div>
+                        <div id="threatTitle" class="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-300 via-orange-300 to-yellow-400 text-center drop-shadow-lg mt-0.5 flex-shrink-0">悬顶之剑</div>
+                        <div class="w-full flex justify-center flex-shrink-0 my-0.5">
+                            <img id="threatImage" class="god-portrait" src="assets/planets/debris.png" alt="太空垃圾危机示意图" />
+                        </div>
+                        <div id="threatDetail" class="text-xs sm:text-sm text-orange-100/90 text-left leading-relaxed bg-black/70 p-3 rounded-xl border border-orange-500/40 w-full backdrop-blur-sm flex-1 min-h-0 overflow-y-visible">【达摩克利斯之剑】小到燃烧残渣，大到废弃的飞船节段。这些"太空不速客"，包括废弃的卫星、火箭碎片等，像幽灵一样，在轨道上漂泊，时刻威胁着正常运行的航天器。2026年8月5日，一段 SpaceX 猎鹰 9 号火箭残骸撞上月球，再次引发全球对太空垃圾问题的关注。这些物体以极高速度运行，若与航天器相撞可能造成严重损坏，部分残骸返回大气层时未完全烧毁还会对地面安全构成威胁。</div>
+                        <div class="text-[10px] text-orange-400/60 text-center mt-1 flex-shrink-0 tracking-wider">👆 点击卡片翻回警告</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 黑洞知识卡片 ===== -->
+            <div id="blackholeCard" class="absolute left-1/2 top-1/2 w-80 max-w-[92%] h-[520px] border-2 border-purple-400/60 rounded-2xl shadow-[0_0_35px_rgba(168,85,247,0.4)] z-50 hidden">
+                <div class="card-inner">
+                    <div class="card-face card-front" id="bhFront" style="background-image:url('assets/cards/blackhole.png');background-size:cover;background-position:center;background-repeat:no-repeat;">
+                        <div class="card-overlay"></div>
+                        <div class="flex items-center justify-between w-full flex-shrink-0">
+                            <span class="text-amber-300 text-[12px] sm:text-[13px] font-black tracking-widest uppercase flex items-center gap-1 drop-shadow-md">✨ 发现新天体成就 ✨</span>
+                            <button class="card-close-btn" id="closeBhBtnFront">✕</button>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-end pb-4 w-full">
+                            <div id="bhDesc" class="text-[0.70rem] sm:text-[0.80rem] text-purple-100/90 text-left leading-relaxed bg-black/70 p-3 rounded-xl border border-purple-500/40 w-full max-h-[160px] overflow-y-auto backdrop-blur-sm min-h-0">【敲黑板——太阳系内没有黑洞】黑洞是连光线都不能逃脱的致密的天体，它的引力强大到可以导致时空弯曲，进入黑洞基本就意味着拿一张有去无回的"单程车票"。黑洞并不是个"洞"，而是宇宙空间内的一种特殊天体。一颗质量巨大的恒星死亡后，内部无法再抵抗自身引力，会向中心坍缩到一个非常小的体积内，最终形成一个光都无法逃逸的时空区域。这个区域不发光、不反射光，看起来漆黑一片。</div>
+                        </div>
+                        <div class="text-[10px] text-amber-400/60 text-center mt-1 flex-shrink-0 tracking-wider">👆 点击卡片翻面查看神话故事</div>
+                    </div>
+                    <div class="card-face card-back" id="bhBack" style="background-image:url('assets/merits/chaos_abyss.png');background-size:cover;background-position:center;background-repeat:no-repeat;">
+                        <div class="card-overlay"></div>
+                        <div class="flex items-center justify-between w-full flex-shrink-0">
+                            <span class="text-indigo-300 text-[12px] sm:text-[13px] font-black tracking-widest uppercase flex items-center gap-1 drop-shadow-md">🏛️ 解锁神祇闪卡 🏛️</span>
+                            <button class="card-close-btn" id="closeBhBtnBack">✕</button>
+                        </div>
+                        <div id="bhGodName" class="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-purple-300 to-pink-400 text-center drop-shadow-lg mt-0.5 flex-shrink-0">卡俄斯 (Chaos)</div>
+                        <div class="w-full flex justify-center flex-shrink-0 my-0.5">
+                            <img id="bhGodImage" class="god-portrait" src="assets/merits/chaos_abyss.png" alt="卡俄斯" />
+                        </div>
+                        <div id="bhGodDesc" class="text-[0.70rem] sm:text-[0.80rem] text-purple-100/90 text-left leading-relaxed bg-black/70 p-3 rounded-xl border border-indigo-500/40 w-full backdrop-blur-sm flex-1 min-h-0 overflow-y-auto">当然，黑洞并不意味着完全漆黑一片，它有一层神奇的边界叫"视界面"，顾名思义是视线能到达的界面。绕在黑色边缘发亮的光环，也不是黑洞本身，而是黑洞周围正在被吞噬的物质。这些物质在高速旋转坠入黑洞时，因为摩擦和压缩产生了极其巨大的热量，辐射出耀眼的强光 。‌‌黑洞照片中间那块纯黑的部分，本质上并不是黑洞的实体，而是黑洞的"影子"（事件视界的阴影），因为没有任何光子反射到我们的眼睛里，所以看起来是绝对的纯黑。希腊神话中宇宙诞生之初只有卡俄斯，它是一片无边无际、绝对黑暗的虚空，是所有时间和空间的起点，也是无形的"无"。既是创世的混沌，又恰如物质被压缩到极致后，光线消失、规则失效的"奇点"。</div>
+                        <div class="text-[10px] text-indigo-400/60 text-center mt-1 flex-shrink-0 tracking-wider">👆 点击卡片翻回科普知识</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-gray-400 text-xs mb-2 bg-black/40 py-1.5 px-3 rounded-full backdrop-blur-sm self-center pointer-events-none" id="hintText">点击屏幕上方释放 (Tap to drop)</div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div class="modal-overlay" id="gameOverModal">
+            <div class="modal-content">
+                <h2 class="text-3xl font-black text-red-500 mb-1">太阳系毁灭！</h2>
+                <h3 class="text-base text-gray-300 mb-4">Game Over</h3>
+                <div class="text-sm text-gray-400 mb-1">最终得分</div>
+                <div class="text-4xl font-black text-yellow-400 mb-6" id="finalScore">0</div>
+                <button id="restartBtn" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transform transition active:scale-95 text-base cursor-pointer">重返太阳系 (Restart)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 战功图鉴 (独立窗口) -->
+    <!-- ============================================================ -->
+    <div class="merit-gallery-overlay" id="meritGalleryOverlay">
+        <div class="merit-gallery" id="meritGallery">
+            <!-- 详情弹窗 (内嵌) -->
+            <div class="merit-gallery-detail-overlay" id="galleryDetailOverlay">
+                <div class="merit-gallery-detail" id="galleryDetail">
+                    <button class="detail-close-btn" id="galleryDetailClose">✕</button>
+                    <div class="detail-rarity-border"></div>
+                    <div class="detail-coin-inner">
+                        <div class="detail-coin-face detail-front" id="detailFront">
+                            <div class="detail-overlay"></div>
+                            <div class="detail-front-content" style="display:none;"></div>
+                        </div>
+                        <div class="detail-coin-face detail-back" id="detailBack">
+                            <div class="detail-overlay"></div>
+                            <div class="detail-back-content">
+                                <div class="detail-back-title" id="detailBackTitle">战功标题</div>
+                                <div class="detail-back-condition" id="detailBackCondition">达成条件</div>
+                                <div class="detail-back-text" id="detailBackText">详细故事……</div>
+                                <div class="detail-back-rarity" id="detailBackRarity">稀有度</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-flip-hint">👆 点击翻转</div>
+                </div>
+            </div>
+
+            <!-- 头部 -->
+            <div class="merit-gallery-header">
+                <h2>|   🏛赫拉克勒斯的十二项试炼🏛  | | 🌟游 戏 战 功 图 鉴🌟 |</span> <span class="merit-gallery-music-indicator" id="musicIndicator">♫Γνῶθι σεαυτόν</span></h2>
+                <button class="merit-gallery-close" id="meritGalleryClose">✕</button>
+            </div>
+
+            <!-- 网格（可滚动） -->
+            <div class="merit-gallery-grid" id="meritGalleryGrid"></div>
+
+            <!-- 底部 -->
+            <div class="merit-gallery-footer">
+                <span>已解锁 <span class="unlock-count" id="unlockCount">0</span> / <span id="totalMeritCount">0</span></span>
+                <span>点击已解锁硬币查看详情</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 静态数据（必须先于游戏逻辑加载） -->
+    <script src="data/game-data.js?v=20261026"></script>
+    <!-- 游戏逻辑 -->
+    <script src="js/game.js?v=20261026"></script>
+
+    <!-- 禁用开发者工具 -->
+    <script src="https://cdn.jsdelivr.net/npm/disable-devtool"></script>
+    <script>
+      DisableDevtool({
+        disableMenu: true,          // 禁用右键菜单
+        interval: 200,              // 检测间隔(ms)
+        ondevtoolopen: function() {
+          window.location.href = 'about:blank';
+        }
+      });
+    </script>
+
+
+
+</body>
+</html>
