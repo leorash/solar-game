@@ -1,0 +1,128 @@
+/* ===== 合成大太阳 · 样式（由原 index.html 内联样式提取） ===== */
+.stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.game-container { position: relative; width: 100%; max-width: 400px; height: 100%; max-height: 88vh; aspect-ratio: 420 / 800; margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); box-shadow: 0 0 40px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; overflow: hidden; pointer-events: auto; }
+#gameCanvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; box-sizing: border-box; z-index: 10; }
+.score-board { background: rgba(10,10,30,0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; padding: 8px 14px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: auto; }
+.modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50; opacity: 0; transition: opacity 0.3s ease; }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-content { background: linear-gradient(135deg, #1e1e38 0%, #0f0f1a 100%); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 30px; text-align: center; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.8); max-width: 85%; pointer-events: auto; }
+.modal-overlay.active .modal-content { transform: scale(1); }
+.planet-name-badge { font-size: 0.65rem; color: #d1d5db; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; margin-top: 4px; white-space: nowrap; }
+button { pointer-events: auto; cursor: pointer; }
+#knowledgeCard, #threatCard, #blackholeCard { transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease; transform: translate(-50%,-50%) scale(0.75); opacity: 0; pointer-events: none; perspective: 1200px; }
+#knowledgeCard.show, #threatCard.show, #blackholeCard.show { transform: translate(-50%,-50%) scale(1); opacity: 1; pointer-events: auto; }
+.card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1); transform-style: preserve-3d; border-radius: 1rem; }
+#knowledgeCard.flipped .card-inner, #threatCard.flipped .card-inner, #blackholeCard.flipped .card-inner { transform: rotateY(180deg); }
+.card-face { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 1rem; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 10px 16px 16px 16px; box-sizing: border-box; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; }
+.card-front { transform: rotateY(0deg); z-index: 2; }
+.card-back { transform: rotateY(180deg); z-index: 1; }
+.card-face .card-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.68); border-radius: 1rem; z-index: 0; }
+.card-face>*:not(.card-overlay) { position: relative; z-index: 1; }
+.card-close-btn { color: #9ca3af; background: rgba(255,255,255,0.08); border: none; border-radius: 9999px; width: 28px; height: 28px; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; flex-shrink: 0; }
+.card-close-btn:hover { color: #fff; background: rgba(255,255,255,0.2); }
+.god-portrait { width: 100%; max-height: 130px; object-fit: contain; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.5); margin: 2px 0 4px 0; }
+#bhDesc, #bhGodDesc, .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+#bhDesc::-webkit-scrollbar, #bhGodDesc::-webkit-scrollbar, .no-scrollbar::-webkit-scrollbar { display: none; }
+#meritCoinWrapper { position: absolute; left: 50%; top: 50%; width: 320px; height: 320px; max-width: 90vw; max-height: 90vw; transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease; transform: translate(-50%,-50%) scale(0.5); opacity: 0; pointer-events: none; perspective: 1500px; z-index: 60; }
+#meritCoinWrapper.show { transform: translate(-50%,-50%) scale(1); opacity: 1; pointer-events: auto; }
+.coin-inner { position: relative; width: 100%; height: 100%; border-radius: 50%; transition: transform 0.8s cubic-bezier(0.23,1,0.32,1), border-color 0.4s ease, box-shadow 0.4s ease; transform-style: preserve-3d; box-shadow: 0 0 35px rgba(251,191,36,0.6), inset 0 0 20px rgba(217,119,6,0.8); border: 5px solid #fbbf24; background: #1c1917; }
+#meritCoinWrapper.flipped .coin-inner { transform: rotateY(180deg); }
+.coin-face { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; background-size: cover !important; background-position: center !important; }
+.coin-front { transform: rotateY(0deg); z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; }
+.coin-back { transform: rotateY(180deg); z-index: 1; background: linear-gradient(135deg, #292524 0%, #0c0a09 100%); }
+.coin-front-overlay { width: 100%; padding: 30px 20px 20px 20px; text-align: center; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%); }
+.coin-back-content { width: 74%; height: 74%; margin: 13% auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+.coin-close-btn { position: absolute; top: 10px; right: 10px; z-index: 10; color: #fbbf24; background: rgba(0,0,0,0.6); border: 1px solid rgba(251,191,36,0.4); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; backdrop-filter: blur(4px); transition: 0.2s; }
+.coin-close-btn:hover { background: #fbbf24; color: #000; }
+@media (max-width:420px) { .card-face { padding: 8px 12px 12px 12px; } .god-portrait { max-height: 100px; } #knowledgeCard, #threatCard, #blackholeCard { width: 92% !important; height: 480px !important; } #meritCoinWrapper { width: 300px; height: 300px; } }
+@media (max-height:700px) { #knowledgeCard, #threatCard, #blackholeCard { height: 430px !important; } .god-portrait { max-height: 80px; } #meritCoinWrapper { width: 260px; height: 260px; } .coin-back-content { width: 76%; height: 76%; margin: 12% auto; } }
+.rarity-common .coin-inner { border-color: #9ca3af !important; box-shadow: 0 0 35px rgba(156,163,175,0.5), inset 0 0 20px rgba(156,163,175,0.3) !important; }
+.rarity-rare .coin-inner { border-color: #3b82f6 !important; box-shadow: 0 0 35px rgba(59,130,246,0.5), inset 0 0 20px rgba(59,130,246,0.3) !important; }
+.rarity-epic .coin-inner { border-color: #8b5cf6 !important; box-shadow: 0 0 35px rgba(139,92,246,0.5), inset 0 0 20px rgba(139,92,246,0.3) !important; }
+.rarity-legendary .coin-inner { border-color: #f59e0b !important; box-shadow: 0 0 35px rgba(245,158,11,0.6), inset 0 0 20px rgba(245,158,11,0.4) !important; }
+
+/* ===== 战功图鉴按钮（右上角，小图标） ===== */
+#meritGalleryBtn { pointer-events: auto; cursor: pointer; background: rgba(10,10,30,0.8); backdrop-filter: blur(8px); border: 1px solid rgba(251,191,36,0.4); border-radius: 9999px; padding: 4px 8px; font-size: 18px; color: #fbbf24; font-weight: bold; transition: 0.3s; box-shadow: 0 0 20px rgba(251,191,36,0.15); white-space: nowrap; line-height: 1; }
+#meritGalleryBtn:hover { background: rgba(251,191,36,0.2); border-color: #fbbf24; transform: scale(1.1); }
+
+/* ===== 图鉴窗口 ===== */
+.merit-gallery-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.35s ease; pointer-events: none; }
+.merit-gallery-overlay.open { display: flex; opacity: 1; pointer-events: auto; }
+.merit-gallery { background: linear-gradient(145deg, #1a1a2e, #0f0f1a); border: 1px solid rgba(251,191,36,0.3); border-radius: 24px; padding: 20px 16px 16px 16px; max-width: 400px; width: 100%; height: 100vh; max-height: 100vh; box-shadow: 0 0 60px rgba(0,0,0,0.9); transform: scale(0.92); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); display: flex; flex-direction: column; overflow: hidden; position: relative; margin: 0 auto; }
+.merit-gallery-overlay.open .merit-gallery { transform: scale(1); }
+
+/* ===== 网格区域（可滚动，隐藏滚动条） ===== */
+.merit-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 14px; overflow-y: auto; padding-right: 4px; flex: 1; min-height: 0; scrollbar-width: none; -ms-overflow-style: none; }
+.merit-gallery-grid::-webkit-scrollbar { display: none; }
+
+/* ===== 硬币卡片 ===== */
+.merit-gallery-coin { aspect-ratio: 1/1; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.55rem; text-align: center; padding: 6px; transition: 0.25s ease; cursor: default; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.4); user-select: none; min-height: 100px; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #1c1c2a; }
+.merit-gallery-coin.unlocked { cursor: pointer; border-color: rgba(251,191,36,0.3); }
+.merit-gallery-coin.unlocked:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(0,0,0,0.6); border-color: rgba(251,191,36,0.7); }
+.merit-gallery-coin.unlocked::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,0.35); z-index: 1; pointer-events: none; }
+.merit-gallery-coin .coin-rarity-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 0 8px rgba(0,0,0,0.5); z-index: 3; }
+.merit-gallery-coin .coin-label { position: relative; z-index: 2; font-weight: 700; font-size: 0.75rem; line-height: 1.2; color: #e5e7eb; text-shadow: 0 2px 6px rgba(0,0,0,0.9); max-width: 90%; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
+.merit-gallery-coin .coin-lock { font-size: 1.2rem; opacity: 0.3; margin-bottom: 2px; z-index: 2; position: relative; }
+.merit-gallery-coin .coin-shine { position: absolute; top: -8%; left: -8%; width: 50%; height: 40%; background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 70%); border-radius: 50%; pointer-events: none; opacity: 0.6; z-index: 0; }
+.merit-gallery-coin.locked { filter: grayscale(0.85) brightness(0.45); border-color: rgba(255,255,255,0.05); background: #1c1c2a !important; }
+.merit-gallery-coin.locked .coin-label { color: #6b7280; }
+
+/* ===== 头部和底部 ===== */
+.merit-gallery-header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; padding-bottom: 8px; border-bottom: 1px solid rgba(251,191,36,0.15); margin-bottom: 12px; }
+.merit-gallery-header h2 { font-size: 1rem; font-weight: 900; background: linear-gradient(to right, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+.merit-gallery-header h2 span { font-size: 0.65rem; -webkit-text-fill-color: rgba(255,255,255,0.4); font-weight: 400; background: none; }
+.merit-gallery-close { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 16px; font-weight: bold; transition: 0.25s; cursor: pointer; flex-shrink: 0; }
+.merit-gallery-close:hover { background: rgba(239,68,68,0.25); color: #fff; border-color: #ef4444; }
+.merit-gallery-music-indicator { font-size: 0.5rem; color: rgba(251,191,36,0.6); display: flex; align-items: center; gap: 4px; margin-left: 8px; animation: pulseMusic 1.8s ease-in-out infinite; }
+@keyframes pulseMusic { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+.merit-gallery-footer { flex-shrink: 0; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.6rem; color: rgba(255,255,255,0.35); }
+.merit-gallery-footer .unlock-count { color: #fbbf24; font-weight: 700; }
+
+/* ===== 详情弹窗 ===== */
+.merit-gallery-detail-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); border-radius: 24px; z-index: 10; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+.merit-gallery-detail-overlay.open { display: flex; opacity: 1; }
+.merit-gallery-detail { width: 340px; height: 340px; max-width: 82vw; max-height: 82vw; perspective: 1200px; position: relative; }
+.merit-gallery-detail .detail-coin-inner { position: relative; width: 100%; height: 100%; border-radius: 50%; transition: transform 0.7s cubic-bezier(0.23,1,0.32,1); transform-style: preserve-3d; border: 5px solid rgba(251,191,36,0.4); box-shadow: 0 0 40px rgba(0,0,0,0.7); background: #1c1917; }
+.merit-gallery-detail.flipped .detail-coin-inner { transform: rotateY(180deg); }
+.merit-gallery-detail .detail-coin-face { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; background-size: cover !important; background-position: center !important; display: flex; flex-direction: column; justify-content: flex-end; padding: 0; box-sizing: border-box; }
+.merit-gallery-detail .detail-front { transform: rotateY(0deg); z-index: 2; background: #1a1a2e; }
+.merit-gallery-detail .detail-front .detail-overlay { position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,0.2); z-index: 0; }
+.merit-gallery-detail .detail-front-content { display: none; }
+.merit-gallery-detail .detail-back { transform: rotateY(180deg); z-index: 1; background: linear-gradient(135deg, #292524, #0c0a09); }
+.merit-gallery-detail .detail-back .detail-overlay { position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,0.6); z-index: 0; }
+.merit-gallery-detail .detail-back-content { position: relative; z-index: 1; width: 82%; height: 82%; margin: 9% auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px; }
+.merit-gallery-detail .detail-back-title { font-size: 1rem; font-weight: 900; color: #fbbf24; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-bottom: 4px; line-height: 1.2; }
+.merit-gallery-detail .detail-back-condition { font-size: 0.6rem; color: #fcd34d; background: rgba(0,0,0,0.4); padding: 2px 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); margin: 4px 0; }
+.merit-gallery-detail .detail-back-text { font-size: 0.7rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 6px rgba(0,0,0,0.9); line-height: 1.6; overflow-y: auto; max-height: 58%; padding: 4px 6px; text-align: justify; scrollbar-width: none; -ms-overflow-style: none; }
+.merit-gallery-detail .detail-back-text::-webkit-scrollbar { display: none; }
+.merit-gallery-detail .detail-back-rarity { font-size: 0.6rem; color: #fbbf24; letter-spacing: 1px; margin-top: 4px; border-top: 1px solid rgba(251,191,36,0.15); padding-top: 4px; width: 80%; }
+.merit-gallery-detail .detail-flip-hint { font-size: 0.5rem; color: rgba(255,255,255,0.25); margin-top: 4px; letter-spacing: 1px; position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; z-index: 2; pointer-events: none; }
+.merit-gallery-detail .detail-close-btn { position: absolute; top: 4px; right: 4px; z-index: 12; color: #fbbf24; background: rgba(0,0,0,0.5); border: 1px solid rgba(251,191,36,0.2); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.merit-gallery-detail .detail-close-btn:hover { background: #fbbf24; color: #000; }
+.merit-gallery-detail .detail-rarity-border { position: absolute; inset: -5px; border-radius: 50%; border: 4px solid transparent; z-index: 0; pointer-events: none; }
+.merit-gallery-detail.rarity-common .detail-rarity-border { border-color: #9ca3af; }
+.merit-gallery-detail.rarity-rare .detail-rarity-border { border-color: #3b82f6; }
+.merit-gallery-detail.rarity-epic .detail-rarity-border { border-color: #8b5cf6; }
+.merit-gallery-detail.rarity-legendary .detail-rarity-border { border-color: #f59e0b; }
+
+@media (max-width: 480px) {
+    .merit-gallery { padding: 14px 12px 16px 12px; border-radius: 20px; }
+    .merit-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+    .merit-gallery-coin { min-height: 76px; }
+    .merit-gallery-coin .coin-label { font-size: 0.6rem; }
+    .merit-gallery-coin .coin-rarity-dot { width: 10px; height: 10px; }
+    .merit-gallery-detail { width: 220px; height: 220px; }
+    .merit-gallery-detail .detail-back-title { font-size: 0.8rem; }
+    .merit-gallery-detail .detail-back-text { font-size: 0.55rem; }
+    .merit-gallery-header h2 { font-size: 0.85rem; }
+    #meritGalleryBtn { font-size: 16px; padding: 3px 7px; }
+}
+@media (max-height: 700px) {
+    .merit-gallery-grid { gap: 8px; }
+    .merit-gallery-coin { min-height: 68px; }
+    .merit-gallery { padding: 12px 10px 12px 10px; }
+    .merit-gallery-detail { width: 190px; height: 190px; }
+    .merit-gallery-detail .detail-back-title { font-size: 0.7rem; }
+    .merit-gallery-detail .detail-back-text { font-size: 0.5rem; }
+}
