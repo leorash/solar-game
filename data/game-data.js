@@ -66,7 +66,7 @@ const PLANETS = [{
     color: "#e89e3a",
     shadow: "#8a4f0f",
     special: 'venus',
-    image: "assets/planets/venus.webp",
+    image: "assets/cards/venus.webp",
     desc: "【温室炼狱——夜空中最亮的星，能否听清】全天最亮的行星，被浓厚的二氧化碳大气和硫酸云所包裹。极端的失控温室效应使其表面温度高达 465℃，甚至高于水星，自转方向与大多数行星相反。",
     godName: "阿佛洛狄忒 (Aphrodite)",
     godImage: "assets/planets/venus.png",
